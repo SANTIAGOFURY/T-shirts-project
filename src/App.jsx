@@ -1,4 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { initializeAdminsCollection } from "./Config/initializeAdmins";
+
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Cart from "./pages/Cart";
@@ -11,9 +14,13 @@ import Dashboard from "./pages/Dashboard";
 import Header from "./components/Header";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AdminRoute from "./components/AdminRoute"; // ✅ Import admin-only route
+import AdminRoute from "./components/AdminRoute";
 
 function App() {
+  useEffect(() => {
+    initializeAdminsCollection();
+  }, []);
+
   return (
     <Router>
       <Header />
