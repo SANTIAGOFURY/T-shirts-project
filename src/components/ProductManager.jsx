@@ -78,7 +78,7 @@ function ProductManager() {
       const formData = new FormData();
       formData.append("image", selectedFile);
       const response = await fetch(
-        "t-shirts-project-production.up.railway.app",
+        "https://t-shirts-project-production.up.railway.app",
         {
           method: "POST",
           body: formData,
@@ -143,10 +143,13 @@ function ProductManager() {
       for (const file of supportingFiles) {
         const formData = new FormData();
         formData.append("image", file);
-        const res = await fetch("t-shirts-project-production.up.railway.app", {
-          method: "POST",
-          body: formData,
-        });
+        const res = await fetch(
+          "https://t-shirts-project-production.up.railway.app",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
         if (!res.ok) throw new Error("Supporting image upload failed");
         const data = await res.json();
         uploadedUrls.push(data.imageUrl);
