@@ -5,9 +5,11 @@ const path = require("path");
 const fs = require("fs");
 
 const app = express();
-const PORT = 4000;
 
-// Enable CORS for all origins (you can restrict later)
+// IMPORTANT: Use dynamic PORT for deployment platforms like Render
+const PORT = process.env.PORT || 4000;
+
+// Enable CORS for all origins (you can restrict this later if needed)
 app.use(cors());
 
 // Serve static files from uploads folder
@@ -33,11 +35,15 @@ const upload = multer({ storage });
 app.post("/upload", upload.single("image"), (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
-  const imageUrl = `http://localhost:${PORT}/uploads/${req.file.filename}`;
+  // Use dynamic host URL instead of hardcoded localhost, build from req headers
+  const host = req.get("host");
+  const protocol = req.protocol;
+  const imageUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
+
   res.json({ imageUrl });
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
