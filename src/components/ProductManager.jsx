@@ -78,7 +78,7 @@ function ProductManager() {
       const formData = new FormData();
       formData.append("image", selectedFile);
       const response = await fetch(
-        "https://t-shirts-project-production.up.railway.app",
+        "https://t-shirts-project-production.up.railway.app/upload",
         {
           method: "POST",
           body: formData,
@@ -144,7 +144,7 @@ function ProductManager() {
         const formData = new FormData();
         formData.append("image", file);
         const res = await fetch(
-          "https://t-shirts-project-production.up.railway.app",
+          "https://t-shirts-project-production.up.railway.app/upload",
           {
             method: "POST",
             body: formData,
