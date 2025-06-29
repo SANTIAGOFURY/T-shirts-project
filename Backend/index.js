@@ -12,25 +12,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Allowed frontend origins
-const allowedOrigins = [
-  "https://t-shirts-project-two.vercel.app",
-  "http://localhost:5173",
-];
-
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // Allow non-browser requests
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = `CORS policy does not allow access from the specified Origin: ${origin}`;
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    credentials: true,
-  })
-);
+// Temporarily allow all origins - no CORS restrictions
+app.use(cors());
 
 // Serve static files from the "upload" folder (singular)
 app.use("/upload", express.static(path.join(__dirname, "upload")));
@@ -64,7 +47,6 @@ app.post("/upload", upload.single("image"), (req, res) => {
 
   const host = req.get("host");
   const protocol = req.protocol;
-  // Note the route prefix is "/upload" (singular)
   const imageUrl = `${protocol}://${host}/upload/${req.file.filename}`;
 
   res.json({ imageUrl });
@@ -73,9 +55,6 @@ app.post("/upload", upload.single("image"), (req, res) => {
 // Error handling middleware (must have 4 params)
 app.use((err, req, res, next) => {
   console.error("Error:", err.message);
-  if (err.message.includes("CORS")) {
-    return res.status(403).json({ error: err.message });
-  }
   res.status(500).json({ error: "Internal Server Error" });
 });
 
