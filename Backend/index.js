@@ -1,11 +1,16 @@
-const express = require("express");
-const multer = require("multer");
-const cors = require("cors");
-const path = require("path");
-const fs = require("fs");
+import express from "express";
+import multer from "multer";
+import cors from "cors";
+import path from "path";
+import fs from "fs";
+import process from "process";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = (typeof process !== "undefined" && process.env && process.env.PORT) ? process.env.PORT : 4000;
 
 // Allow only your Vercel frontend and localhost for dev
 const allowedOrigins = [
@@ -38,12 +43,17 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Health check
-app.get("/", (req, res) => res.send("Backend is live"));
+// Health check 
+app.get("/", (req, res) => {
+  res.send("Backend is live");
+});
 
 // Image upload endpoint
 app.post("/upload", upload.single("image"), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+  if (!req.file) {
+    res.status(400).json({ error: "No file uploaded" });
+    return;
+  }
 
   const host = req.get("host");
   const protocol = req.protocol;
