@@ -32,18 +32,18 @@ app.use(
   })
 );
 
-// Serve static uploads folder
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Serve static files from the "upload" folder (singular)
+app.use("/upload", express.static(path.join(__dirname, "upload")));
 
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, "uploads");
+// Ensure upload directory exists
+const uploadDir = path.join(__dirname, "upload");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
-// Multer setup
+// Multer storage config - save files in "upload" folder
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
+  destination: (req, file, cb) => cb(null, "upload/"),
   filename: (req, file, cb) => {
     const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(null, uniqueName + path.extname(file.originalname));
@@ -56,7 +56,7 @@ app.get("/", (req, res) => {
   res.send("Backend is live");
 });
 
-// Upload route
+// Upload endpoint
 app.post("/upload", upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
@@ -64,7 +64,8 @@ app.post("/upload", upload.single("image"), (req, res) => {
 
   const host = req.get("host");
   const protocol = req.protocol;
-  const imageUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
+  // Note the route prefix is "/upload" (singular)
+  const imageUrl = `${protocol}://${host}/upload/${req.file.filename}`;
 
   res.json({ imageUrl });
 });
